@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Library Catalog Tool Pro</title>
+<style>
+body{
+margin:0;
+font-family:'Segoe UI',sans-serif;
+background:linear-gradient(135deg,#7c3aed,#06b6d4);
+min-height:100vh;
+padding:25px;
+color:white;
+}
+.container{
+max-width:1200px;
+margin:auto;
+background:rgba(255,255,255,.12);
+backdrop-filter:blur(12px);
+padding:25px;
+border-radius:20px;
+}
+h1{text-align:center;}
+.form{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+gap:12px;
+}
+input,select,button{
+padding:12px;
+border:none;
+border-radius:10px;
+font-size:15px;
+}
+button{
+background:#22c55e;
+color:white;
+font-weight:bold;
+cursor:pointer;
+}
+.cards{
+display:grid;
+grid-template-columns:repeat(3,1fr);
+gap:12px;
+margin-top:20px;
+}
+.card{
+background:rgba(255,255,255,.15);
+padding:15px;
+border-radius:15px;
+text-align:center;
+}
+.search{
+margin-top:20px;
+width:100%;
+}
+table{
+width:100%;
+margin-top:20px;
+border-collapse:collapse;
+background:white;
+color:black;
+border-radius:15px;
+overflow:hidden;
+}
+th,td{
+padding:12px;
+border-bottom:1px solid #ddd;
+text-align:center;
+}
+th{
+background:#5b21b6;
+color:white;
+}
+.actionBtn{
+background:#ef4444;
+color:white;
+padding:8px 12px;
+border:none;
+border-radius:8px;
+cursor:pointer;
+}
+@media(max-width:700px){
+.cards{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+<h1>📚 Library Catalog Tool Pro</h1>
+
+<div class="form">
+<input id="title" placeholder="Book Title">
+<input id="author" placeholder="Author Name">
+<input id="isbn" placeholder="ISBN Number">
+<select id="status">
+<option>Available</option>
+<option>Issued</option>
+</select>
+<button onclick="addBook()">Add Book</button>
+</div>
+
+<input id="search" class="search" placeholder="🔍 Search by title..." onkeyup="render()">
+
+<div class="cards">
+<div class="card">
+<h3>Total Books</h3>
+<h2 id="total">0</h2>
+</div>
+
+<div class="card">
+<h3>Available Books</h3>
+<h2 id="available">0</h2>
+</div>
+
+<div class="card">
+<h3>Issued Books</h3>
+<h2 id="issued">0</h2>
+</div>
+</div>
+
+<table>
+<thead>
+<tr>
+<th>Title</th>
+<th>Author</th>
+<th>ISBN</th>
+<th>Status</th>
+<th>Action</th>
+</tr>
+</thead>
+<tbody id="tableBody"></tbody>
+</table>
+
+</div>
+
+<script>
+let books=[];
+
+function addBook(){
+let title=document.getElementById("title").value.trim();
+let author=document.getElementById("author").value.trim();
+let isbn=document.getElementById("isbn").value.trim();
+let status=document.getElementById("status").value;
+
+if(!title || !author || !isbn){
+alert("Please fill all fields.");
+return;
+}
+
+books.push({title,author,isbn,status});
+
+document.getElementById("title").value="";
+document.getElementById("author").value="";
+document.getElementById("isbn").value="";
+
+render();
+}
+
+function deleteBook(index){
+books.splice(index,1);
+render();
+}
+
+function render(){
+const body=document.getElementById("tableBody");
+const keyword=document.getElementById("search").value.toLowerCase();
+body.innerHTML="";
+
+books.forEach((b,index)=>{
+if(!b.title.toLowerCase().includes(keyword)) return;
+
+body.innerHTML += `
+<tr>
+<td>${b.title}</td>
+<td>${b.author}</td>
+<td>${b.isbn}</td>
+<td>${b.status}</td>
+<td><button class="actionBtn" onclick="deleteBook(${index})">Delete</button></td>
+</tr>`;
+});
+
+document.getElementById("total").innerText=books.length;
+document.getElementById("available").innerText=
+books.filter(b=>b.status==="Available").length;
+document.getElementById("issued").innerText=
+books.filter(b=>b.status==="Issued").length;
+}
+</script>
+
+</body>
+</html>
